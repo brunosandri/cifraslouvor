@@ -44,6 +44,7 @@ export async function createSong(form: SongFormData): Promise<Song> {
       bpm: form.bpm ? Number(form.bpm) : null,
       tags: form.tags ? form.tags.split(',').map(t => t.trim()).filter(Boolean) : [],
       notes: form.notes.trim() || null,
+      guide: form.guide.trim() || null,
     })
     .select()
     .single()
@@ -60,6 +61,7 @@ export async function updateSong(id: string, form: Partial<SongFormData>): Promi
   if (form.bpm !== undefined) payload.bpm = form.bpm ? Number(form.bpm) : null
   if (form.tags !== undefined) payload.tags = form.tags.split(',').map(t => t.trim()).filter(Boolean)
   if (form.notes !== undefined) payload.notes = form.notes.trim() || null
+  if (form.guide !== undefined) payload.guide = form.guide.trim() || null
 
   const { data, error } = await supabase
     .from('songs')

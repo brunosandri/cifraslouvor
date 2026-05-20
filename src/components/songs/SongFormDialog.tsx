@@ -29,6 +29,7 @@ export function SongFormDialog({ open, onClose, onSaved, initialData }: Props) {
     bpm: initialData?.bpm?.toString() ?? '',
     tags: initialData?.tags?.join(', ') ?? '',
     notes: initialData?.notes ?? '',
+    guide: initialData?.guide ?? '',
   })
   const [saving, setSaving] = useState(false)
   const [errors, setErrors] = useState<Partial<SongFormData>>({})
@@ -114,6 +115,13 @@ export function SongFormDialog({ open, onClose, onSaved, initialData }: Props) {
           value={form.tags}
           onChange={set('tags')}
           placeholder="louvor, adoração, rápida"
+        />
+        <Input
+          label="Guia da música"
+          id="guide"
+          value={form.guide}
+          onChange={set('guide')}
+          placeholder="Ex: Intro > Verso > Refrão (2x) > Ponte > Refrão"
         />
         <Textarea
           label="Observações"

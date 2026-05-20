@@ -112,6 +112,25 @@ export default function SongPage({ params }: { params: Promise<{ id: string }> }
         </Button>
       </div>
 
+      {/* Guia da música */}
+      {song.guide && (
+        <div className="mb-6 rounded-xl bg-amber-500/5 border border-amber-500/20 px-4 py-3">
+          <p className="text-xs font-semibold text-amber-500 uppercase tracking-wider mb-2">Guia</p>
+          <div className="flex flex-wrap items-center gap-1.5">
+            {song.guide.split('>').map((part, i, arr) => (
+              <span key={i} className="flex items-center gap-1.5">
+                <span className="px-2.5 py-1 rounded-lg bg-gray-800 border border-gray-700 text-sm text-gray-200 font-medium whitespace-nowrap">
+                  {part.trim()}
+                </span>
+                {i < arr.length - 1 && (
+                  <span className="text-amber-500/60 text-sm font-bold">›</span>
+                )}
+              </span>
+            ))}
+          </div>
+        </div>
+      )}
+
       {/* Audio player */}
       {(song.audio_files?.length ?? 0) > 0 && (
         <div className="mb-6">

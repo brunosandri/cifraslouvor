@@ -55,6 +55,7 @@ export interface Song {
   bpm: number | null
   tags: string[]
   notes: string | null
+  guide: string | null
   created_at: string
   updated_at: string
   sections?: SongSection[]
@@ -88,6 +89,7 @@ export interface SongFormData {
   bpm: string
   tags: string
   notes: string
+  guide: string
 }
 
 export interface SectionFormData {
