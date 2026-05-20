@@ -2,14 +2,14 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { Music2, Library, Settings, Menu, X } from 'lucide-react'
+import { Music2, Library, PenSquare, Settings, Menu, X } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { useState } from 'react'
 import { Button } from '@/components/ui/button'
 
 const navItems = [
-  { href: '/songs', label: 'Cifras', icon: Music2 },
   { href: '/library', label: 'Biblioteca', icon: Library },
+  { href: '/songs', label: 'Editor de Cifras', icon: PenSquare },
 ]
 
 export function Sidebar() {
