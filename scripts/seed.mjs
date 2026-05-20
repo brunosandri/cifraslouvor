@@ -15,8 +15,8 @@ import { fileURLToPath } from 'url'
 // ──────────────────────────────────────────────
 // CONFIGURAÇÃO — preencha com suas credenciais
 // ──────────────────────────────────────────────
-const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL || 'COLE_SUA_URL_AQUI'
-const SUPABASE_KEY = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'COLE_SUA_KEY_AQUI'
+const SUPABASE_URL = 'https://nelpecjrumdocmptbalo.supabase.co'
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5lbHBlY2pydW1kb2NtcHRiYWxvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkyMjA2MjYsImV4cCI6MjA5NDc5NjYyNn0.lLMSUzVdGKSAT4OHeImliwbOH9iQmMGayMoxxKSJ5LE'
 // ──────────────────────────────────────────────
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
@@ -29,12 +29,10 @@ if (SUPABASE_URL.includes('COLE')) {
 
 const supabase = createClient(SUPABASE_URL, SUPABASE_KEY)
 
-// Corrige mojibake (UTF-8 lido como Latin-1)
+// Corrige mojibake (UTF-8 bytes lidos como Latin-1)
 function fixEncoding(str) {
   try {
-    const fixed = Buffer.from(str, 'latin1').toString('utf8')
-    // Valida: se contém sequências inválidas, fica com o original
-    return /[ÃÂ]/.test(fixed) ? str : fixed
+    return Buffer.from(str, 'latin1').toString('utf8')
   } catch {
     return str
   }
@@ -116,7 +114,7 @@ async function insertSong({ title, artist, key, sections }) {
 
   const { data: song, error: songErr } = await supabase
     .from('songs')
-    .insert({ title, artist: artist || null, key: key || null, tags: [], bpm: null, notes: null, guide: null })
+    .insert({ title, artist: artist || null, key: key || null, tags: [], bpm: null, notes: null })
     .select()
     .single()
 
