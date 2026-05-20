@@ -2,13 +2,14 @@
 
 import { useEffect, useState, use } from 'react'
 import { useRouter } from 'next/navigation'
-import { ArrowLeft, Loader2, Music2 } from 'lucide-react'
+import { ArrowLeft, Loader2, Music2, Expand } from 'lucide-react'
 import { getSong } from '@/lib/db'
 import type { Song, SongSection } from '@/lib/types'
 import { SECTION_LABELS, SECTION_COLORS } from '@/lib/types'
 import { Badge } from '@/components/ui/badge'
 import { ChordDisplay } from '@/components/songs/ChordDisplay'
 import { AudioPlayer } from '@/components/songs/AudioPlayer'
+import { PresentationMode } from '@/components/songs/PresentationMode'
 import { cn } from '@/lib/utils'
 import Link from 'next/link'
 
@@ -18,6 +19,7 @@ export default function LibrarySongPage({ params }: { params: Promise<{ id: stri
   const [song, setSong] = useState<Song | null>(null)
   const [sections, setSections] = useState<SongSection[]>([])
   const [loading, setLoading] = useState(true)
+  const [showPresentation, setShowPresentation] = useState(false)
 
   useEffect(() => {
     getSong(id)
@@ -53,8 +55,17 @@ export default function LibrarySongPage({ params }: { params: Promise<{ id: stri
       {/* Header */}
       <div className="mb-6">
         <div className="flex items-center gap-3 flex-wrap">
-          <h1 className="text-2xl font-bold text-gray-100">{song.title}</h1>
+          <h1 className="text-2xl font-bold text-gray-100 flex-1">{song.title}</h1>
           {song.key && <Badge variant="amber" className="text-sm px-2.5 py-1">{song.key}</Badge>}
+          {sections.length > 0 && (
+            <button
+              onClick={() => setShowPresentation(true)}
+              className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-amber-500 hover:bg-amber-400 text-gray-950 text-sm font-medium transition-colors shrink-0"
+            >
+              <Expand size={15} />
+              Apresentar
+            </button>
+          )}
         </div>
         <div className="flex items-center gap-3 mt-1 flex-wrap">
           {song.artist && <span className="text-sm text-gray-400">{song.artist}</span>}
@@ -149,6 +160,14 @@ export default function LibrarySongPage({ params }: { params: Promise<{ id: stri
           Ir para o Editor de Cifras →
         </Link>
       </div>
+
+      {showPresentation && (
+        <PresentationMode
+          song={song}
+          sections={sections}
+          onClose={() => setShowPresentation(false)}
+        />
+      )}
     </div>
   )
 }
