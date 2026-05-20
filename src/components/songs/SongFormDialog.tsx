@@ -57,8 +57,9 @@ export function SongFormDialog({ open, onClose, onSaved, initialData }: Props) {
         : await createSong(form)
       onSaved(song)
     } catch (err) {
+      const msg = err instanceof Error ? err.message : JSON.stringify(err)
       console.error('Erro ao salvar cifra:', err)
-      setErrors({ title: 'Erro ao salvar. Tente novamente.' })
+      setErrors({ title: `Erro: ${msg}` })
     } finally {
       setSaving(false)
     }

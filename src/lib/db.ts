@@ -10,27 +10,32 @@ export async function getSongs(): Promise<Song[]> {
     .select('*')
     .order('title', { ascending: true })
   if (error) throw error
-  return data ?? []
+  return (data ?? []) as Song[]
 }
 
 export async function getSong(id: string): Promise<Song | null> {
   const supabase = createClient()
   const { data, error } = await supabase
     .from('songs')
-    .select(`*, sections:song_sections(*), audio_files(*)`)
+    .select('*, sections:song_sections(*), audio_files(*)')
     .eq('id', id)
     .single()
   if (error) return null
   if (!data) return null
+  const row = data as unknown as Song & {
+    sections: SongSection[]
+    audio_files: AudioFile[]
+  }
   return {
-    ...data,
-    sections: (data.sections as SongSection[]).sort((a, b) => a.order_index - b.order_index),
+    ...row,
+    sections: row.sections.sort((a, b) => a.order_index - b.order_index),
   }
 }
 
 export async function createSong(form: SongFormData): Promise<Song> {
   const supabase = createClient()
-  const { data, error } = await supabase
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const { data, error } = await (supabase as any)
     .from('songs')
     .insert({
       title: form.title.trim(),
@@ -43,7 +48,7 @@ export async function createSong(form: SongFormData): Promise<Song> {
     .select()
     .single()
   if (error) throw error
-  return data
+  return data as unknown as Song
 }
 
 export async function updateSong(id: string, form: Partial<SongFormData>): Promise<Song> {
@@ -58,12 +63,12 @@ export async function updateSong(id: string, form: Partial<SongFormData>): Promi
 
   const { data, error } = await supabase
     .from('songs')
-    .update(payload)
+    .update(payload as never)
     .eq('id', id)
     .select()
     .single()
   if (error) throw error
-  return data
+  return data as unknown as Song
 }
 
 export async function deleteSong(id: string): Promise<void> {
@@ -80,14 +85,15 @@ export async function searchSongs(query: string): Promise<Song[]> {
     .or(`title.ilike.%${query}%,artist.ilike.%${query}%`)
     .order('title', { ascending: true })
   if (error) throw error
-  return data ?? []
+  return (data ?? []) as Song[]
 }
 
 // ── Sections ───────────────────────────────────────────────────────────────
 
 export async function createSection(songId: string, form: SectionFormData, orderIndex: number): Promise<SongSection> {
   const supabase = createClient()
-  const { data, error } = await supabase
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const { data, error } = await (supabase as any)
     .from('song_sections')
     .insert({
       song_id: songId,
@@ -100,7 +106,7 @@ export async function createSection(songId: string, form: SectionFormData, order
     .select()
     .single()
   if (error) throw error
-  return data
+  return data as unknown as SongSection
 }
 
 export async function updateSection(id: string, updates: Partial<SectionFormData>): Promise<SongSection> {
@@ -113,12 +119,12 @@ export async function updateSection(id: string, updates: Partial<SectionFormData
 
   const { data, error } = await supabase
     .from('song_sections')
-    .update(payload)
+    .update(payload as never)
     .eq('id', id)
     .select()
     .single()
   if (error) throw error
-  return data
+  return data as unknown as SongSection
 }
 
 export async function deleteSection(id: string): Promise<void> {
@@ -131,7 +137,7 @@ export async function reorderSections(sections: { id: string; order_index: numbe
   const supabase = createClient()
   await Promise.all(
     sections.map(({ id, order_index }) =>
-      supabase.from('song_sections').update({ order_index }).eq('id', id)
+      supabase.from('song_sections').update({ order_index } as never).eq('id', id)
     )
   )
 }
@@ -150,7 +156,8 @@ export async function uploadAudioFile(songId: string, file: File, description: s
 
   const { data: { publicUrl } } = supabase.storage.from('audio').getPublicUrl(path)
 
-  const { data, error } = await supabase
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const { data, error } = await (supabase as any)
     .from('audio_files')
     .insert({
       song_id: songId,
@@ -161,7 +168,7 @@ export async function uploadAudioFile(songId: string, file: File, description: s
     .select()
     .single()
   if (error) throw error
-  return data
+  return data as unknown as AudioFile
 }
 
 export async function deleteAudioFile(audioFile: AudioFile): Promise<void> {
